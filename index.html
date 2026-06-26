@@ -344,7 +344,140 @@
   .dbt-word { font-weight: 800; font-size: 19px; letter-spacing: -0.03em; color: var(--brand); }
   .footer .brand .mini { width: 13px; height: 13px; vertical-align: -2px; }
 
-  /* platform band */
+  /* ================= FUTURE-STATE ARCHITECTURE ================= */
+  .arch {
+    margin-top: 26px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 6px 2px 14px;
+    min-width: 0;
+  }
+  .col {
+    border-radius: 16px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 0;
+    min-width: 168px;
+  }
+  .col.ingestion { flex: 0 0 150px; min-width: 150px; }
+  .col.platform-col { flex: 2.6 1 0; min-width: 440px; gap: 14px; padding: 16px; background: transparent; }
+  .col.aiinfra { flex: 1.25 1 0; min-width: 230px; }
+  .col.llms { flex: 1 1 0; min-width: 198px; }
+
+  /* column tints */
+  .col.sources { background: #eef7f1; border: 1px solid #d7ebdf; }
+  .col.ingestion { background: #fdeee9; border: 1px solid #f6d8ce; align-items: center; justify-content: flex-start; }
+  .col.aiinfra { background: #fdeee9; border: 1px solid #f6d8ce; }
+  .col.llms { background: #eaf1fc; border: 1px solid #d4e2f6; }
+
+  .col-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .lbl-green { color: #1f9d57; }
+  .lbl-coral { color: #d9512f; }
+  .lbl-purple { color: #7c54d4; }
+  .lbl-blue { color: #3a6fd0; }
+  .lbl-keep { text-transform: none; letter-spacing: .04em; }
+
+  /* generic item rows (sources / llms) */
+  .item {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 11px;
+    box-shadow: var(--shadow-sm);
+  }
+  .badge {
+    flex: none; width: 24px; height: 24px; border-radius: 7px;
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 800; color: #fff;
+    font-family: var(--mono);
+  }
+  .item .it-t { font-size: 13px; font-weight: 700; line-height: 1.15; }
+  .item .it-d { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+
+  /* big panels in platform column */
+  .panel {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+  .panel.coral { background: #fdeee9; border-color: #f6d8ce; }
+  .panel.purple { background: #efeafc; border-color: #ddd2f5; }
+
+  .panel-title { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+  .panel-title .dbt-tile {
+    width: 44px; height: 44px; border-radius: 11px; flex: none;
+    background: var(--brand); display: grid; place-items: center;
+    box-shadow: 0 4px 12px rgba(255,105,74,.3);
+  }
+  .panel-title .dbt-tile svg { width: 26px; height: 26px; }
+  .panel-title h3 { margin: 0; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; color: #1a2230; }
+  .panel-title .serif { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+  .panel-sub { color: var(--brand); font-weight: 700; font-size: 13px; margin: 12px 0 0; letter-spacing: .01em; }
+
+  /* capability pills */
+  .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .cap {
+    text-align: center;
+    border: 1.5px solid #f0b9a8;
+    color: #d9512f;
+    background: #fff;
+    border-radius: 999px;
+    padding: 11px 8px;
+    font-size: 13px; font-weight: 700;
+  }
+
+  /* small feature callout boxes */
+  .feat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .feat {
+    background: #fff; border: 1px solid #f3ddd4; border-radius: 11px; padding: 11px 12px;
+  }
+  .feat .ft-h { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: #d9512f; font-weight: 700; }
+  .feat .ft-b { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+
+  /* data platform chips */
+  .dp-title { font-size: 18px; font-weight: 700; color: #1a2230; margin: 4px 0 0; letter-spacing: -0.01em; }
+  .dp-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; margin-top: 14px; }
+  .dp {
+    background: #fff; border: 1px solid #e4dcf6; border-radius: 11px;
+    padding: 11px 6px; text-align: center;
+  }
+  .dp .badge { margin: 0 auto 7px; background: #f0ebfb; color: #7c54d4; }
+  .dp .dp-n { font-size: 11.5px; font-weight: 700; line-height: 1.1; }
+  .dp .dp-d { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+  /* ai infra grouped stacks */
+  .group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: #d9512f; font-weight: 700; margin-top: 4px; }
+  .ai-item {
+    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    padding: 10px 12px; font-size: 13px; font-weight: 700; box-shadow: var(--shadow-sm);
+  }
+  .ai-item span { display: block; font-size: 10px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+
+  .stack { display: flex; flex-direction: column; gap: 7px; }
+
+  /* arrows between columns */
+  .arch .farrow { display: flex; align-items: center; padding: 0; opacity: .5; color: var(--faint); font-size: 18px; }
+
+  @media (max-width: 1100px) {
+    .arch { min-width: 1080px; }
+  }
+
+  /* platform band (legacy, unused now) */
+  .platform {
+    flex: 1;
   .platform {
     flex: 1;
     margin: 0 8px;
@@ -623,92 +756,135 @@
   <section class="view" id="future">
 
     <div class="section-head">
-      <h2>dbt + Fivetran own the middle — raw data to AI-ready</h2>
+      <h2>One governed path — raw data to any AI model</h2>
       <span class="tag good">Governed · documented · repeatable</span>
     </div>
-    <p class="hint">Same path, sideways — but the platform swallows the chaos. Metadata, lineage and docs go all the way down to raw data.</p>
+    <p class="hint">dbt + Fivetran own everything between your sources and your LLMs. Metadata, lineage and docs go all the way down to raw data.</p>
 
-    <div class="future-flow">
-      <div class="frail">
+    <div class="arch">
 
-        <div class="fstage fend" style="width:148px">
-          <div class="fcard a-source">
-            <span class="ft-lockup">
-              <svg class="ft-mark" viewBox="0 0 24 24" fill="none" stroke="#0073FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-label="Fivetran">
-                <path d="M4 5 L11 12 L4 19"/>
-                <path d="M12.5 5 L19.5 12 L12.5 19"/>
-              </svg>
-              <span class="ft-word">Fivetran</span>
+      <!-- SOURCES -->
+      <div class="col sources">
+        <div class="col-label lbl-green">Sources</div>
+        <div class="item"><span class="badge" style="background:#1f9d57">S</span><div><div class="it-t">SaaS</div></div></div>
+        <div class="item"><span class="badge" style="background:#1f9d57">D</span><div><div class="it-t">Databases</div></div></div>
+        <div class="item"><span class="badge" style="background:#1f9d57">A</span><div><div class="it-t">APIs</div></div></div>
+        <div class="item"><span class="badge" style="background:#1f9d57">F</span><div><div class="it-t">Files</div></div></div>
+      </div>
+
+      <div class="farrow">→</div>
+
+      <!-- INGESTION -->
+      <div class="col ingestion">
+        <div class="col-label lbl-coral">Ingestion</div>
+        <div style="margin:auto 0;text-align:center">
+          <div style="width:64px;height:64px;border-radius:15px;background:var(--brand);display:grid;place-items:center;margin:0 auto 12px;box-shadow:0 6px 16px rgba(255,105,74,.32)">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6 L11 12 L5 18"/><path d="M13 6 L19 12 L13 18"/></svg>
+          </div>
+          <div style="font-weight:800;font-size:15px;color:#1a2230">dbt + Fivetran</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">Extract &amp; Load</div>
+        </div>
+      </div>
+
+      <div class="farrow">→</div>
+
+      <!-- DBT PLATFORM (two stacked panels) -->
+      <div class="col platform-col">
+
+        <div class="panel coral">
+          <div class="col-label lbl-coral lbl-keep">dbt platform</div>
+          <div class="panel-title">
+            <span class="dbt-tile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="11" y1="3.5" x2="8.5" y2="20.5"/><line x1="16.5" y1="3.5" x2="14" y2="20.5"/></svg>
             </span>
-            <div class="sub2">Managed ingestion from any source</div>
+            <h3><span class="serif" style="color:var(--brand)">dbt</span> Data Infrastructure</h3>
+          </div>
+          <div class="panel-sub">Transform · Test · Document · Deploy</div>
+
+          <div class="pills">
+            <div class="cap">Transformation</div>
+            <div class="cap">Pipeline CI/CD</div>
+            <div class="cap">Semantics</div>
+            <div class="cap">Data Quality</div>
+            <div class="cap">Catalog</div>
+            <div class="cap">Documentation</div>
+          </div>
+
+          <div class="feat-row">
+            <div class="feat">
+              <div class="ft-h">Fusion + dbt Copilot</div>
+              <div class="ft-b">Build and validate data pipelines while optimizing compute and outputs.</div>
+            </div>
+            <div class="feat">
+              <div class="ft-h">State-aware orchestration</div>
+              <div class="ft-b">Only update what changed, with auto-managed dependencies.</div>
+            </div>
           </div>
         </div>
 
-        <div class="farrow">→</div>
-
-        <!-- the platform band -->
-        <div class="platform">
-          <div class="banner">The dbt platform owns everything in here</div>
-          <div class="dbt-lockup">
-            <svg class="dbt-mark" viewBox="0 0 24 24" fill="none" stroke="#FF694A" stroke-width="3" stroke-linecap="round" aria-label="dbt">
-              <line x1="4" y1="9" x2="20" y2="9"/>
-              <line x1="4" y1="15" x2="20" y2="15"/>
-              <line x1="11" y1="3.5" x2="8.5" y2="20.5"/>
-              <line x1="16.5" y1="3.5" x2="14" y2="20.5"/>
-            </svg>
-            <span class="dbt-word">dbt</span>
-          </div>
-          <div class="pgrid">
-            <div class="pchip">
-              <div class="t" style="color:var(--bronze)">Bronze</div>
-              <div class="d">Auto-documented raw transforms</div>
-            </div>
-            <div class="pchip">
-              <div class="t" style="color:#6b7686">Silver</div>
-              <div class="d">Tested, versioned joins</div>
-            </div>
-            <div class="pchip">
-              <div class="t" style="color:#b87600">Gold</div>
-              <div class="d">Shared, multi-team marts</div>
-            </div>
-            <div class="pchip">
-              <div class="t" style="color:var(--semantic)">Semantic layer</div>
-              <div class="d">Governed metrics, defined once</div>
-            </div>
-          </div>
-          <div class="gov">
-            <b>Lineage + metadata + docs → all the way down to raw data.</b> Pull requests into the same model. Fact-checked. Governed.
-          </div>
-        </div>
-
-        <div class="farrow">→</div>
-
-        <div class="fstage fend">
-          <div class="fcard a-mcp">
-            <div class="htxt" style="color:var(--mcp)">Governed MCP</div>
-            <div class="sub2">One managed layer → AI</div>
+        <div class="panel purple">
+          <div class="col-label lbl-purple lbl-keep">Data platform</div>
+          <div class="dp-title">Run on any platform</div>
+          <div class="dp-grid">
+            <div class="dp"><span class="badge">❄</span><div class="dp-n">Snowflake</div><div class="dp-d">Data Cloud</div></div>
+            <div class="dp"><span class="badge">BQ</span><div class="dp-n">BigQuery</div><div class="dp-d">Google Cloud</div></div>
+            <div class="dp"><span class="badge">DB</span><div class="dp-n">Databricks</div><div class="dp-d">Lakehouse</div></div>
+            <div class="dp"><span class="badge">RS</span><div class="dp-n">Redshift</div><div class="dp-d">Amazon</div></div>
+            <div class="dp"><span class="badge">PG</span><div class="dp-n">PostgreSQL</div><div class="dp-d">Open Source</div></div>
+            <div class="dp"><span class="badge">✦</span><div class="dp-n">Starburst</div><div class="dp-d">Trino</div></div>
           </div>
         </div>
 
       </div>
-    </div>
 
-    <div class="fbenefits">
-      <div class="ben">
-        <div class="ico">🔍</div>
-        <h3>See raw data at a finger snap</h3>
-        <p>Lineage and documentation are generated, not maintained. Anyone can trace a metric back to its source in seconds.</p>
+      <div class="farrow">→</div>
+
+      <!-- AI INFRA -->
+      <div class="col aiinfra">
+        <div class="col-label lbl-coral">AI infra</div>
+        <div class="panel-title" style="margin-top:2px">
+          <span class="dbt-tile" style="width:38px;height:38px;border-radius:10px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="width:22px;height:22px"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="11" y1="3.5" x2="8.5" y2="20.5"/><line x1="16.5" y1="3.5" x2="14" y2="20.5"/></svg>
+          </span>
+          <h3 style="font-size:16px;line-height:1.15"><span class="serif" style="color:var(--brand)">dbt</span> AI Infrastructure</h3>
+        </div>
+
+        <div class="group-label">Context layer</div>
+        <div class="stack">
+          <div class="ai-item">dbt-index</div>
+          <div class="ai-item">Project metadata</div>
+          <div class="ai-item">Unstructured data</div>
+          <div class="ai-item">Skills</div>
+        </div>
+
+        <div class="group-label">Governance</div>
+        <div class="stack">
+          <div class="ai-item">Policies &amp; ACLs</div>
+        </div>
+
+        <div class="group-label">Observability</div>
+        <div class="stack">
+          <div class="ai-item">Trace &amp; reasoning</div>
+          <div class="ai-item">Confidence scores</div>
+        </div>
       </div>
-      <div class="ben">
-        <div class="ico">🏛️</div>
-        <h3>The semantic layer is governed</h3>
-        <p>Metrics are defined once and reused — through dbt's semantic layer or semantic views — not hand-stitched per person.</p>
+
+      <div class="farrow">→</div>
+
+      <!-- LLMS -->
+      <div class="col llms">
+        <div class="col-label lbl-blue">LLMs</div>
+        <div class="dp-title" style="font-size:15px">Any AI model</div>
+        <div class="stack" style="gap:8px">
+          <div class="item"><span class="badge" style="background:#d97757">C</span><div><div class="it-t">Claude</div><div class="it-d">Anthropic</div></div></div>
+          <div class="item"><span class="badge" style="background:#10a37f">AI</span><div><div class="it-t">OpenAI</div><div class="it-d">GPT</div></div></div>
+          <div class="item"><span class="badge" style="background:#4285f4">G</span><div><div class="it-t">Gemini</div><div class="it-d">Google</div></div></div>
+          <div class="item"><span class="badge" style="background:#0866ff">L</span><div><div class="it-t">Llama</div><div class="it-d">Meta</div></div></div>
+          <div class="item"><span class="badge" style="background:#ff7000">M</span><div><div class="it-t">Mistral</div><div class="it-d">Large</div></div></div>
+          <div class="item"><span class="badge" style="background:#39594d">Co</span><div><div class="it-t">Cohere</div><div class="it-d">Command R+</div></div></div>
+        </div>
       </div>
-      <div class="ben">
-        <div class="ico">🔁</div>
-        <h3>Steve can leave</h3>
-        <p>Knowledge lives in the platform, not a person. No tower collapses when someone changes teams.</p>
-      </div>
+
     </div>
 
     <div class="callout">
