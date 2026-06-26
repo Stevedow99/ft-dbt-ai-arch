@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Raw data → AI-ready</title>
+<style>
+  :root {
+    /* surfaces */
+    --bg: #f6f7f9;
+    --bg-2: #eef1f5;
+    --panel: #ffffff;
+    --panel-2: #f4f6f9;
+    --line: #e3e7ee;
+    --line-soft: #edf0f4;
+
+    /* ink */
+    --ink: #1a2230;
+    --muted: #5d6878;
+    --faint: #99a3b2;
+
+    /* brand + layer accents */
+    --brand: #ff694a;        /* dbt coral */
+    --source: #16a55a;
+    --bronze: #c07a3e;
+    --silver: #8b97a8;
+    --gold: #e29400;
+    --semantic: #4f6bff;
+    --mcp: #a64bff;
+    --review: #2f6bf2;
+    --danger: #e0483b;
+
+    --shadow-sm: 0 1px 2px rgba(20,30,50,.04), 0 2px 6px rgba(20,30,50,.05);
+    --shadow-md: 0 2px 6px rgba(20,30,50,.05), 0 10px 30px rgba(20,30,50,.07);
+
+    --ff: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background:
+      radial-gradient(900px 480px at 12% -8%, rgba(255,105,74,.06), transparent 60%),
+      radial-gradient(900px 460px at 100% -5%, rgba(79,107,255,.06), transparent 58%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--ff);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1340px; margin: 0 auto; padding: 56px 40px 90px; }
+
+  /* ---------- Header ---------- */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--brand);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 4px rgba(255,105,74,.15); }
+
+  h1 {
+    font-size: 44px;
+    line-height: 1.04;
+    margin: 18px 0 14px;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+    color: #141b27;
+  }
+  h1 .em { color: var(--brand); }
+
+  .sub {
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 760px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ---------- Tab nav ---------- */
+  .tabs {
+    display: inline-flex;
+    gap: 4px;
+    margin: 36px 0 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 5px;
+    border-radius: 13px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tab {
+    font-family: var(--ff);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: .18s;
+  }
+  .tab:hover { color: var(--ink); background: var(--panel-2); }
+  .tab.current.active { background: #fff0ed; color: #c43e29; box-shadow: inset 0 0 0 1px rgba(224,72,59,.25); }
+  .tab.future.active { background: #eef2ff; color: #2f47c4; box-shadow: inset 0 0 0 1px rgba(79,107,255,.25); }
+
+  .view { display: none; animation: fade .35s ease; }
+  .view.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .section-head { display: flex; align-items: center; gap: 14px; margin: 30px 0 6px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 24px; margin: 0; letter-spacing: -0.015em; }
+  .section-head .tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 7px; font-weight: 600;
+  }
+  .tag.bad { color: #c43e29; background: #fdecea; border: 1px solid rgba(224,72,59,.22); }
+  .tag.good { color: #2f47c4; background: #eef2ff; border: 1px solid rgba(79,107,255,.22); }
+  .hint { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
+
+  /* ================= CURRENT STATE FLOW ================= */
+  .flow {
+    margin-top: 28px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 32px 28px 24px;
+    overflow-x: auto;
+    box-shadow: var(--shadow-md);
+  }
+  .rail {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    min-width: 1180px;
+    position: relative;
+  }
+
+  .stage { position: relative; display: flex; flex-direction: column; }
+  .stage.endpoint { width: 116px; }
+  .stage.layer { width: 232px; }
+
+  /* peer review arch */
+  .review {
+    position: relative;
+    height: 84px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .review .label {
+    position: absolute;
+    top: 0;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--review);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .review svg { overflow: visible; }
+  .review .hrs {
+    position: absolute;
+    top: 22px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--faint);
+  }
+  .review.blank { visibility: hidden; }
+
+  .connector {
+    align-self: center;
+    width: 100%;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--faint) 0 6px, transparent 6px 12px);
+    opacity: .55;
+  }
+
+  .card {
+    border-radius: 14px;
+    padding: 15px 15px 13px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    min-height: 156px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card .htxt { font-size: 13px; font-weight: 700; letter-spacing: .005em; }
+  .card .sub2 { font-size: 11.5px; color: var(--muted); line-height: 1.45; }
+
+  .steps { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+  .step {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--muted);
+    background: var(--panel-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 7px;
+    padding: 5px 8px;
+  }
+
+  .pill-time {
+    margin-top: auto;
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fdecea;
+    color: #c43e29;
+    border: 1px solid rgba(224,72,59,.2);
+  }
+
+  .endpoint .card { align-items: center; justify-content: center; text-align: center; }
+  .endpoint .card .htxt { font-size: 12px; }
+
+  /* color accents */
+  .a-source { border-top: 3px solid var(--source); }
+  .a-source .htxt { color: var(--source); }
+  .a-bronze { border-top: 3px solid var(--bronze); }
+  .a-bronze .htxt { color: var(--bronze); }
+  .a-silver { border-top: 3px solid var(--silver); }
+  .a-silver .htxt { color: #6b7686; }
+  .a-gold { border-top: 3px solid var(--gold); }
+  .a-gold .htxt { color: #b87600; }
+  .a-semantic { border-top: 3px solid var(--semantic); }
+  .a-semantic .htxt { color: var(--semantic); }
+  .a-mcp { border-top: 3px solid var(--mcp); }
+  .a-mcp .htxt { color: var(--mcp); }
+
+  .ungov {
+    position: absolute;
+    top: -10px; right: 10px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #c43e29;
+    background: #fdecea;
+    border: 1px solid rgba(224,72,59,.3);
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .timeline-note {
+    text-align: center;
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .timeline-note b { color: var(--danger); }
+
+  /* ---------- stat strip ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat .n { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: #141b27; }
+  .stat.danger { background: linear-gradient(180deg, #fff6f5, #fff); border-color: rgba(224,72,59,.2); }
+  .stat.danger .n { color: var(--danger); }
+  .stat .l { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+  .stat .eq { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 10px; }
+
+  /* ---------- quote callout ---------- */
+  .callout {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .quote {
+    background: linear-gradient(135deg, #fff6f5, #fff);
+    border: 1px solid rgba(224,72,59,.22);
+    border-radius: 16px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
+  }
+  .quote .q { font-size: 19px; font-weight: 700; line-height: 1.42; letter-spacing: -0.01em; color: #1a2230; }
+  .quote .a { color: var(--muted); font-size: 13.5px; margin-top: 12px; line-height: 1.5; }
+  .quote.calm {
+    background: linear-gradient(135deg, #f4f6ff, #fff);
+    border-color: rgba(79,107,255,.22);
+  }
+
+  /* ================= FUTURE STATE ================= */
+  .future-flow {
+    margin-top: 28px;
+    border: 1px solid rgba(79,107,255,.22);
+    border-radius: 20px;
+    padding: 34px 28px;
+    background: linear-gradient(180deg, #f7f9ff, #fff);
+    overflow-x: auto;
+    box-shadow: var(--shadow-md);
+  }
+  .frail { display: flex; align-items: center; gap: 0; min-width: 1100px; }
+  .fstage { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .fend { width: 124px; }
+  .fcard {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: center;
+    width: 100%;
+    min-height: 96px;
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    box-shadow: var(--shadow-sm);
+  }
+  .fcard .htxt { font-size: 13px; font-weight: 700; }
+  .fcard .sub2 { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .farrow { color: var(--semantic); font-size: 24px; padding: 0 8px; opacity: .55; }
+
+  /* platform band */
+  .platform {
+    flex: 1;
+    margin: 0 8px;
+    border: 1.5px solid rgba(79,107,255,.4);
+    border-radius: 18px;
+    padding: 18px 18px 20px;
+    background: linear-gradient(135deg, rgba(79,107,255,.07), rgba(166,75,255,.05));
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .platform .banner {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: var(--semantic); color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .05em; text-transform: uppercase;
+    padding: 5px 16px; border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(79,107,255,.3);
+  }
+  .platform .pgrid { display: flex; gap: 10px; margin-top: 12px; }
+  .pchip {
+    flex: 1; text-align: center;
+    background: #fff;
+    border: 1px solid rgba(79,107,255,.2);
+    border-radius: 12px;
+    padding: 13px 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pchip .t { font-size: 12px; font-weight: 700; }
+  .pchip .d { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 1.35; }
+  .platform .gov {
+    margin-top: 14px; text-align: center;
+    font-family: var(--mono); font-size: 11.5px; color: #3a52cc;
+  }
+  .platform .gov b { color: #1a2230; }
+
+  .fbenefits { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 28px; }
+  .ben {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 16px; padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .ben .ico { font-size: 22px; }
+  .ben h3 { font-size: 15px; margin: 12px 0 6px; }
+  .ben p { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+  .footer {
+    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--faint); font-size: 12px; font-family: var(--mono);
+    flex-wrap: wrap; gap: 10px;
+  }
+  .footer .brand { color: var(--muted); }
+  .footer .brand b { color: var(--ink); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 12px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  @media (max-width: 900px) {
+    .stats, .fbenefits { grid-template-columns: 1fr 1fr; }
+    .callout { grid-template-columns: 1fr; }
+    h1 { font-size: 32px; }
+    .wrap { padding: 40px 22px 70px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span> First call · what we think is happening</div>
+  <h1>One metric. <span class="em">Six manual layers.</span> A week of someone's life.</h1>
+  <p class="sub">
+    Every data engineer is hand-building their own path from raw source to AI-ready output — stored procedures,
+    transformations, a hand-stitched semantic view, an ungoverned MCP server. Multiply it across the team and you
+    don't have a platform. You have towers of technical debt.
+  </p>
+
+  <div class="tabs">
+    <button class="tab current active" data-view="current">⚠ Current state</button>
+    <button class="tab future" data-view="future">✓ Future state</button>
+  </div>
+
+  <!-- ============ CURRENT STATE ============ -->
+  <section class="view active" id="current">
+
+    <div class="section-head">
+      <h2>The path from raw data to AI-ready, today</h2>
+      <span class="tag bad">Manual · ungoverned</span>
+    </div>
+    <p class="hint">Read left to right. Every arch is a peer review and a PR — another round of Zoom calls before anything ships.</p>
+
+    <div class="flow">
+      <div class="rail">
+
+        <!-- SOURCE -->
+        <div class="stage endpoint">
+          <div class="review blank"></div>
+          <div class="card a-source">
+            <div class="htxt">Source</div>
+            <div class="sub2">Hundreds of data scripts &amp; connections to maintain</div>
+          </div>
+        </div>
+
+        <!-- review 1 (the big one: 15 hrs) -->
+        <div class="stage" style="width:120px">
+          <div class="review">
+            <div class="label" style="left:50%;transform:translateX(-50%)">Peer review · PR</div>
+            <svg width="120" height="60" viewBox="0 0 120 60">
+              <path d="M6 58 C 20 6, 100 6, 114 58" fill="none" stroke="var(--review)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="hrs">~15 hrs/wk</div>
+          </div>
+          <div class="connector"></div>
+        </div>
+
+        <!-- BRONZE -->
+        <div class="stage layer">
+          <div class="review blank"></div>
+          <div class="card a-bronze">
+            <div class="htxt">Bronze · raw transforms</div>
+            <div class="steps">
+              <div class="step">stored procs / dbt Core models</div>
+              <div class="step">orchestration + break/fix</div>
+              <div class="step">undocumented</div>
+            </div>
+            <div class="pill-time">≈ 15 hrs / week</div>
+          </div>
+        </div>
+
+        <!-- review 2 -->
+        <div class="stage" style="width:110px">
+          <div class="review">
+            <div class="label" style="left:50%;transform:translateX(-50%)">Peer review · PR</div>
+            <svg width="110" height="60" viewBox="0 0 110 60">
+              <path d="M6 58 C 18 14, 92 14, 104 58" fill="none" stroke="var(--review)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="connector"></div>
+        </div>
+
+        <!-- SILVER -->
+        <div class="stage layer">
+          <div class="review blank"></div>
+          <div class="card a-silver">
+            <div class="htxt">Silver · joined</div>
+            <div class="steps">
+              <div class="step">join with other people's models</div>
+              <div class="step">orchestration per layer</div>
+              <div class="step">data gov + testing (manual)</div>
+            </div>
+            <div class="pill-time">≈ 8 hrs / week</div>
+          </div>
+        </div>
+
+        <!-- review 3 -->
+        <div class="stage" style="width:110px">
+          <div class="review">
+            <div class="label" style="left:50%;transform:translateX(-50%)">Peer review · PR</div>
+            <svg width="110" height="60" viewBox="0 0 110 60">
+              <path d="M6 58 C 18 14, 92 14, 104 58" fill="none" stroke="var(--review)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="connector"></div>
+        </div>
+
+        <!-- GOLD -->
+        <div class="stage layer">
+          <div class="review blank"></div>
+          <div class="card a-gold">
+            <div class="htxt">Gold · multi-team</div>
+            <div class="steps">
+              <div class="step">coordinate across multiple teams</div>
+              <div class="step">orchestration + CI/CD</div>
+              <div class="step">docs maybe in someone's Notion</div>
+            </div>
+            <div class="pill-time">≈ 8 hrs / week</div>
+          </div>
+        </div>
+
+        <!-- review 4 -->
+        <div class="stage" style="width:110px">
+          <div class="review">
+            <div class="label" style="left:50%;transform:translateX(-50%)">Peer review · PR</div>
+            <svg width="110" height="60" viewBox="0 0 110 60">
+              <path d="M6 58 C 18 14, 92 14, 104 58" fill="none" stroke="var(--review)" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="connector"></div>
+        </div>
+
+        <!-- SEMANTIC -->
+        <div class="stage layer">
+          <div class="review blank"></div>
+          <div class="card a-semantic">
+            <div class="ungov">manual</div>
+            <div class="htxt">Semantic view</div>
+            <div class="steps">
+              <div class="step">hand-stitch metrics together</div>
+              <div class="step">one view = one metric</div>
+            </div>
+            <div class="pill-time">≈ 4 hrs / metric</div>
+          </div>
+        </div>
+
+        <!-- connector to MCP -->
+        <div class="stage" style="width:70px">
+          <div class="review blank"></div>
+          <div class="connector"></div>
+        </div>
+
+        <!-- MCP -->
+        <div class="stage endpoint" style="width:130px">
+          <div class="review blank"></div>
+          <div class="card a-mcp">
+            <div class="ungov">ungoverned</div>
+            <div class="htxt">MCP server → LLM</div>
+            <div class="sub2">Owned &amp; managed by one person</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="legend">
+        <span><i style="background:var(--source)"></i>Source</span>
+        <span><i style="background:var(--bronze)"></i>Bronze</span>
+        <span><i style="background:var(--silver)"></i>Silver</span>
+        <span><i style="background:var(--gold)"></i>Gold</span>
+        <span><i style="background:var(--semantic)"></i>Semantic</span>
+        <span><i style="background:var(--mcp)"></i>MCP / AI</span>
+        <span><i style="background:var(--review)"></i>Peer review + PR</span>
+      </div>
+
+      <div class="timeline-note">
+        End to end, that whole rail produces <b>one</b> metric — and it's the optimistic case.
+      </div>
+    </div>
+
+    <!-- STAT STRIP: the towers math -->
+    <div class="stats">
+      <div class="stat danger">
+        <div class="n">20</div>
+        <div class="l">ad-hoc builds per engineer, per week</div>
+        <div class="eq">if they're lucky</div>
+      </div>
+      <div class="stat">
+        <div class="n">× 100</div>
+        <div class="l">developers doing it independently</div>
+        <div class="eq">no shared platform</div>
+      </div>
+      <div class="stat danger">
+        <div class="n">2,000</div>
+        <div class="l">ungoverned "towers" built into the ecosystem</div>
+        <div class="eq">= 20 × 100 / week</div>
+      </div>
+      <div class="stat">
+        <div class="n">5–10</div>
+        <div class="l">genuinely useful, production-tested metrics a solo builder ships per week</div>
+        <div class="eq">often: one</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="quote">
+        <div class="q">"What if Steve leaves? He built 20% of your entire AI stack."</div>
+        <div class="a">Every tower lives in one person's head. Undocumented. Ungoverned. Unrepeatable.</div>
+      </div>
+      <div class="quote">
+        <div class="q">How many cross-team Zoom calls does it take just to reach a gold layer — let alone the semantic layer?</div>
+        <div class="a">The real cost isn't the code. It's the coordination tax on every single metric.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FUTURE STATE ============ -->
+  <section class="view" id="future">
+
+    <div class="section-head">
+      <h2>dbt + Fivetran own the middle — raw data to AI-ready</h2>
+      <span class="tag good">Governed · documented · repeatable</span>
+    </div>
+    <p class="hint">Same path, sideways — but the platform swallows the chaos. Metadata, lineage and docs go all the way down to raw data.</p>
+
+    <div class="future-flow">
+      <div class="frail">
+
+        <div class="fstage fend">
+          <div class="fcard a-source">
+            <div class="htxt" style="color:var(--source)">Sources</div>
+            <div class="sub2">Fivetran-managed ingestion</div>
+          </div>
+        </div>
+
+        <div class="farrow">→</div>
+
+        <!-- the platform band -->
+        <div class="platform">
+          <div class="banner">The platform owns everything in here</div>
+          <div class="pgrid">
+            <div class="pchip">
+              <div class="t" style="color:var(--bronze)">Bronze</div>
+              <div class="d">Auto-documented raw transforms</div>
+            </div>
+            <div class="pchip">
+              <div class="t" style="color:#6b7686">Silver</div>
+              <div class="d">Tested, versioned joins</div>
+            </div>
+            <div class="pchip">
+              <div class="t" style="color:#b87600">Gold</div>
+              <div class="d">Shared, multi-team marts</div>
+            </div>
+            <div class="pchip">
+              <div class="t" style="color:var(--semantic)">Semantic layer</div>
+              <div class="d">Governed metrics, defined once</div>
+            </div>
+          </div>
+          <div class="gov">
+            <b>Lineage + metadata + docs → all the way down to raw data.</b> Pull requests into the same model. Fact-checked. Governed.
+          </div>
+        </div>
+
+        <div class="farrow">→</div>
+
+        <div class="fstage fend">
+          <div class="fcard a-mcp">
+            <div class="htxt" style="color:var(--mcp)">Governed MCP</div>
+            <div class="sub2">One managed layer → AI</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="fbenefits">
+      <div class="ben">
+        <div class="ico">🔍</div>
+        <h3>See raw data at a finger snap</h3>
+        <p>Lineage and documentation are generated, not maintained. Anyone can trace a metric back to its source in seconds.</p>
+      </div>
+      <div class="ben">
+        <div class="ico">🏛️</div>
+        <h3>The semantic layer is governed</h3>
+        <p>Metrics are defined once and reused — through dbt's semantic layer or semantic views — not hand-stitched per person.</p>
+      </div>
+      <div class="ben">
+        <div class="ico">🔁</div>
+        <h3>Steve can leave</h3>
+        <p>Knowledge lives in the platform, not a person. No tower collapses when someone changes teams.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="quote calm">
+        <div class="q">"They don't understand how much of their day we can free up."</div>
+        <div class="a">dbt + Fivetran tell the full story — raw ingestion to AI-ready — so the team builds metrics, not plumbing.</div>
+      </div>
+      <div class="quote calm">
+        <div class="q">Pull and push requests into the same model. Everything documented. Down to the raw data.</div>
+        <div class="a">No more Snowflake side-projects or one-off notebooks that only one person can read.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    <span class="brand"><b>dbt</b> + Fivetran · raw data → AI-ready</span>
+    <span>Deck order: current state → future state → customer story</span>
+  </div>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const views = document.querySelectorAll('.view');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    views.forEach(v => v.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.view).classList.add('active');
+  }));
+</script>
+</body>
+</html>
