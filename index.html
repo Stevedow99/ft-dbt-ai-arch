@@ -349,24 +349,24 @@
     margin-top: 26px;
     display: flex;
     align-items: stretch;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 6px 2px 14px;
+    gap: 6px;
+    padding: 4px 0 4px;
     min-width: 0;
   }
   .col {
     border-radius: 16px;
-    padding: 16px 14px;
+    padding: 15px 13px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 11px;
     flex: 1 1 0;
-    min-width: 168px;
+    min-width: 0;
   }
-  .col.ingestion { flex: 0 0 150px; min-width: 150px; }
-  .col.platform-col { flex: 2.6 1 0; min-width: 440px; gap: 14px; padding: 16px; background: transparent; }
-  .col.aiinfra { flex: 1.25 1 0; min-width: 230px; }
-  .col.llms { flex: 1 1 0; min-width: 198px; }
+  .col.sources   { flex: 1.05 1 0; }
+  .col.ingestion { flex: 0.95 1 0; align-items: center; justify-content: flex-start; }
+  .col.platform-col { flex: 2.7 1 0; gap: 0; padding: 0; background: transparent; border: none; }
+  .col.aiinfra   { flex: 1.45 1 0; }
+  .col.llms      { flex: 1.15 1 0; }
 
   /* column tints */
   .col.sources { background: #eef7f1; border: 1px solid #d7ebdf; }
@@ -423,20 +423,21 @@
     box-shadow: 0 4px 12px rgba(255,105,74,.3);
   }
   .panel-title .dbt-tile svg { width: 26px; height: 26px; }
-  .panel-title h3 { margin: 0; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; color: #1a2230; }
-  .panel-title .serif { font-family: Georgia, "Times New Roman", serif; font-weight: 600; }
+  .panel-title h3 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.02em; color: #1a2230; line-height: 1.1; }
+  .panel-title .dbtw { color: var(--brand); }
   .panel-sub { color: var(--brand); font-weight: 700; font-size: 13px; margin: 12px 0 0; letter-spacing: .01em; }
 
   /* capability pills */
-  .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 14px; }
   .cap {
     text-align: center;
     border: 1.5px solid #f0b9a8;
     color: #d9512f;
     background: #fff;
     border-radius: 999px;
-    padding: 11px 8px;
-    font-size: 13px; font-weight: 700;
+    padding: 10px 6px;
+    font-size: 12.5px; font-weight: 700;
+    white-space: nowrap;
   }
 
   /* small feature callout boxes */
@@ -447,16 +448,28 @@
   .feat .ft-h { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: #d9512f; font-weight: 700; }
   .feat .ft-b { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
 
-  /* data platform chips */
-  .dp-title { font-size: 18px; font-weight: 700; color: #1a2230; margin: 4px 0 0; letter-spacing: -0.01em; }
-  .dp-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 9px; margin-top: 14px; }
+  /* data platform — full-width strip below the diagram */
+  .dp-band {
+    margin-top: 14px;
+    background: #efeafc;
+    border: 1px solid #ddd2f5;
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .dp-band .dp-head { flex: none; }
+  .dp-title { font-size: 16px; font-weight: 700; color: #1a2230; margin: 3px 0 0; letter-spacing: -0.01em; }
+  .dp-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; flex: 1; }
   .dp {
     background: #fff; border: 1px solid #e4dcf6; border-radius: 11px;
-    padding: 11px 6px; text-align: center;
+    padding: 11px 8px; text-align: center;
   }
   .dp .badge { margin: 0 auto 7px; background: #f0ebfb; color: #7c54d4; }
-  .dp .dp-n { font-size: 11.5px; font-weight: 700; line-height: 1.1; }
-  .dp .dp-d { font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .dp .dp-n { font-size: 12px; font-weight: 700; line-height: 1.1; }
+  .dp .dp-d { font-size: 9.5px; color: var(--muted); margin-top: 2px; }
 
   /* ai infra grouped stacks */
   .group-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: #d9512f; font-weight: 700; margin-top: 4px; }
@@ -469,10 +482,19 @@
   .stack { display: flex; flex-direction: column; gap: 7px; }
 
   /* arrows between columns */
-  .arch .farrow { display: flex; align-items: center; padding: 0; opacity: .5; color: var(--faint); font-size: 18px; }
+  .arch .farrow { display: flex; align-items: center; padding: 0 1px; opacity: .45; color: var(--faint); font-size: 16px; flex: none; }
 
-  @media (max-width: 1100px) {
-    .arch { min-width: 1080px; }
+  /* make the platform panel fill its column height */
+  .col.platform-col .panel { height: 100%; }
+
+  /* below ~1080 the diagram gets cramped — scroll instead of squashing */
+  @media (max-width: 1080px) {
+    .arch { overflow-x: auto; }
+    .arch > * { flex-shrink: 0; }
+    .col.sources { min-width: 150px; }
+    .col.platform-col { min-width: 400px; }
+    .col.aiinfra { min-width: 210px; }
+    .col.llms { min-width: 170px; }
   }
 
   /* platform band (legacy, unused now) */
@@ -788,16 +810,15 @@
 
       <div class="farrow">→</div>
 
-      <!-- DBT PLATFORM (two stacked panels) -->
+      <!-- DBT PLATFORM -->
       <div class="col platform-col">
-
         <div class="panel coral">
           <div class="col-label lbl-coral lbl-keep">dbt platform</div>
           <div class="panel-title">
             <span class="dbt-tile">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="11" y1="3.5" x2="8.5" y2="20.5"/><line x1="16.5" y1="3.5" x2="14" y2="20.5"/></svg>
             </span>
-            <h3><span class="serif" style="color:var(--brand)">dbt</span> Data Infrastructure</h3>
+            <h3><span class="dbtw">dbt</span> Data Infrastructure</h3>
           </div>
           <div class="panel-sub">Transform · Test · Document · Deploy</div>
 
@@ -821,20 +842,6 @@
             </div>
           </div>
         </div>
-
-        <div class="panel purple">
-          <div class="col-label lbl-purple lbl-keep">Data platform</div>
-          <div class="dp-title">Run on any platform</div>
-          <div class="dp-grid">
-            <div class="dp"><span class="badge">❄</span><div class="dp-n">Snowflake</div><div class="dp-d">Data Cloud</div></div>
-            <div class="dp"><span class="badge">BQ</span><div class="dp-n">BigQuery</div><div class="dp-d">Google Cloud</div></div>
-            <div class="dp"><span class="badge">DB</span><div class="dp-n">Databricks</div><div class="dp-d">Lakehouse</div></div>
-            <div class="dp"><span class="badge">RS</span><div class="dp-n">Redshift</div><div class="dp-d">Amazon</div></div>
-            <div class="dp"><span class="badge">PG</span><div class="dp-n">PostgreSQL</div><div class="dp-d">Open Source</div></div>
-            <div class="dp"><span class="badge">✦</span><div class="dp-n">Starburst</div><div class="dp-d">Trino</div></div>
-          </div>
-        </div>
-
       </div>
 
       <div class="farrow">→</div>
@@ -846,7 +853,7 @@
           <span class="dbt-tile" style="width:38px;height:38px;border-radius:10px">
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" style="width:22px;height:22px"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="11" y1="3.5" x2="8.5" y2="20.5"/><line x1="16.5" y1="3.5" x2="14" y2="20.5"/></svg>
           </span>
-          <h3 style="font-size:16px;line-height:1.15"><span class="serif" style="color:var(--brand)">dbt</span> AI Infrastructure</h3>
+          <h3 style="font-size:16px;line-height:1.15"><span class="dbtw">dbt</span> AI Infrastructure</h3>
         </div>
 
         <div class="group-label">Context layer</div>
@@ -885,6 +892,22 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- DATA PLATFORM — full-width strip -->
+    <div class="dp-band">
+      <div class="dp-head">
+        <div class="col-label lbl-purple lbl-keep">Data platform</div>
+        <div class="dp-title">Run on any platform</div>
+      </div>
+      <div class="dp-grid">
+        <div class="dp"><span class="badge">❄</span><div class="dp-n">Snowflake</div><div class="dp-d">Data Cloud</div></div>
+        <div class="dp"><span class="badge">BQ</span><div class="dp-n">BigQuery</div><div class="dp-d">Google Cloud</div></div>
+        <div class="dp"><span class="badge">DB</span><div class="dp-n">Databricks</div><div class="dp-d">Lakehouse</div></div>
+        <div class="dp"><span class="badge">RS</span><div class="dp-n">Redshift</div><div class="dp-d">Amazon</div></div>
+        <div class="dp"><span class="badge">PG</span><div class="dp-n">PostgreSQL</div><div class="dp-d">Open Source</div></div>
+        <div class="dp"><span class="badge">✦</span><div class="dp-n">Starburst</div><div class="dp-d">Trino</div></div>
+      </div>
     </div>
 
     <div class="callout">
